@@ -12,3 +12,4 @@ irlCoin.addBlock(
 );
 
 console.log('irlCoin:', JSON.stringify(irlCoin, null, 4));
+console.log('irlCoin blockchain valid: ', irlCoin.isChainValid());
