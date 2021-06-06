@@ -1,15 +1,15 @@
 const Block = require('./Block');
 const Blockchain = require('./Blockchain');
+const Transaction = require('./Transaction');
 
 const irlCoin = new Blockchain();
 
-irlCoin.addBlock(
-  new Block(1, '06/06/2021', { sender: 'Ray', recipient: 'John', amount: 10 })
-);
+//fromAddress and toAddress would be public key of wallets
+irlCoin.createTransaction(new Transaction('Ray', 'Nancy', 100));
+irlCoin.createTransaction(new Transaction('Nancy', 'Ray', 50));
 
-irlCoin.addBlock(
-  new Block(2, '06/06/2021', { sender: 'Ray', recipient: 'Nancy', amount: 50 })
-);
+console.log('Starting the miner...');
+irlCoin.minePendingTransactions('John');
 
 console.log('irlCoin:', JSON.stringify(irlCoin, null, 4));
-console.log('irlCoin blockchain valid: ', irlCoin.isChainValid());
+console.log('Balance of John: ', irlCoin.getBalanceOfAddress('John'));
