@@ -19,3 +19,5 @@ class Block {
     ).toString();
   }
 }
+
+module.exports = Block;
