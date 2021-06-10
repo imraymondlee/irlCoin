@@ -27,6 +27,16 @@ class Block {
       this.hash = this.calculateHash();
     }
   }
+
+  hasValidTransactions() {
+    for (const tx of this.transactions) {
+      if (!tx.isValid()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 }
 
 module.exports = Block;

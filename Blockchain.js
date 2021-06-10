@@ -6,7 +6,7 @@ class Blockchain {
     this.chain = [this.createGenesisBlock()];
     this.difficulty = 1;
     this.pendingTransactions = [];
-    this.miningReward = 10;
+    this.miningReward = 100;
   }
 
   createGenesisBlock() {
@@ -18,19 +18,36 @@ class Blockchain {
   }
 
   minePendingTransactions(miningRewardAddress) {
-    const block = new Block(Date.now(), this.pendingTransactions);
+    //create new transaction for the reward
+    const rewardTx = new Transaction(
+      null,
+      miningRewardAddress,
+      this.miningReward
+    );
+    this.pendingTransactions.push(rewardTx);
+
+    const block = new Block(
+      Date.now(),
+      this.pendingTransactions,
+      this.getLatestBlock.hash
+    );
     block.mineBlock(this.difficulty);
 
     console.log('Block successfully mined');
     this.chain.push(block);
 
-    //create new transaction for the reward
-    this.pendingTransactions = [
-      new Transaction(null, miningRewardAddress, this.miningReward),
-    ];
+    this.pendingTransactions = [];
   }
 
-  createTransaction(transaction) {
+  addTransaction(transaction) {
+    if (!transaction.fromAddress || !transaction.toAddress) {
+      throw new Error('Transaction must include from and to address.');
+    }
+
+    if (!transaction.isValid()) {
+      throw new Error('Cnnot add invalid transaction to the blockcahin');
+    }
+
     this.pendingTransactions.push(transaction);
   }
 
@@ -54,6 +71,11 @@ class Blockchain {
     for (let i = 1; i < this.chain.length; i++) {
       const currentBlock = this.chain[i];
       const previousBlock = this.chain[i - 1];
+
+      //ensure transactions in current block are valid
+      if (!currentBlock.hasValidTransactions()) {
+        return false;
+      }
 
       //validate current block's hash is still valid based on its properties
       if (currentBlock.hash !== currentBlock.calculateHash()) {
